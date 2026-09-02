@@ -256,6 +256,33 @@ export default function PayrollPage() {
     }
 
     setDoneId(payroll.id);
+
+    // Tenter FedaPay (si configuré) — sinon simulation locale
+    try {
+      const { data: { user: u } } = await supabase.auth.getUser();
+      const fp = await fetch("/api/fedapay/deposit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: totalDeposit,
+          description: `Dépôt paie KoyaPay — ${salaryMonth || paymentDate}`,
+          email: u?.email || "",
+          payrollId: payroll.id,
+        }),
+      });
+      const fpJson = await fp.json();
+      if (fpJson.ok && fpJson.paymentUrl) {
+        window.location.href = fpJson.paymentUrl;
+        return;
+      }
+      // 503 = non configuré → on continue en mode simulation
+      if (fp.status !== 503 && !fpJson.ok) {
+        console.warn("FedaPay:", fpJson.error);
+      }
+    } catch (err) {
+      console.warn("FedaPay indisponible", err);
+    }
+
     setStep(4);
     setSaving(false);
   }

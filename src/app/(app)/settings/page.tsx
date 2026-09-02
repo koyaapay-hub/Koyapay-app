@@ -275,7 +275,13 @@ export default function SettingsPage() {
           </button>
         </div>
 
-        <p className="text-center text-[11px] text-ink-soft pb-2">KoyaPay · Bénin · 2026</p>
+        <p className="text-center text-[11px] text-ink-soft pb-2 space-x-2">
+          <a href="/cgu" className="underline">CGU</a>
+          <span>·</span>
+          <a href="/confidentialite" className="underline">Confidentialité</a>
+          <span>·</span>
+          <span>KoyaPay · Bénin · 2026</span>
+        </p>
       </main>
     </>
   );
