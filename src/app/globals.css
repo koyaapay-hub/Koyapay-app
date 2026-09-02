@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #0F1B2D;
+  --navy-2: #16273D;
+  --paper: #FBF9F5;
+  --paper-2: #F1EDE4;
+  --ink: #14213D;
+  --ink-soft: #5B6472;
+  --green: #2FAF64;
+  --green-deep: #1F8A4C;
+  --green-bg: #E4F5EA;
+  --line: rgba(20, 33, 61, 0.12);
+  --danger: #B23B3B;
+}
+
+body {
+  color: var(--ink);
+  background: var(--paper);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Sora', system-ui, sans-serif;
+}
