@@ -21,7 +21,14 @@ export default async function DashboardPage() {
     .select("*", { count: "exact", head: true })
     .eq("company_id", user.id);
 
-  const balance = Number(company?.balance || 0);
+  const { data: lastPay } = await supabase
+    .from("payrolls")
+    .select("total_net, salary_month, payment_date")
+    .eq("company_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const lastMass = Number(lastPay?.total_net || 0);
 
   return (
     <>
@@ -39,9 +46,9 @@ export default async function DashboardPage() {
 
         <div className="mt-5 grid grid-cols-2 gap-2">
           <div className="bg-white/10 rounded-xl px-3 py-3">
-            <p className="text-[10px] text-white/55">Solde KoyaPay</p>
+            <p className="text-[10px] text-white/55">Dernière masse salariale</p>
             <p className="font-display text-[16px] font-semibold mt-0.5">
-              {balance.toLocaleString("fr-FR")} FCFA
+              {lastMass.toLocaleString("fr-FR")} FCFA
             </p>
           </div>
           <div className="bg-white/10 rounded-xl px-3 py-3">

@@ -28,9 +28,6 @@ type Row = Emp & {
 
 const METHODS = [
   { id: "MTN MoMo", label: "MTN MoMo" },
-  { id: "Moov Money", label: "Moov Money" },
-  { id: "Celtiis Cash", label: "Celtiis Cash" },
-  { id: "Virement", label: "Virement" },
 ];
 
 export default function PayrollPage() {
@@ -256,6 +253,20 @@ export default function PayrollPage() {
     }
 
     setDoneId(payroll.id);
+
+    // Historique transaction (dépôt)
+    await supabase.from("payment_transactions").insert({
+      company_id: user.id,
+      payroll_id: payroll.id,
+      payment_date: paymentDate,
+      salary_month: salaryMonth,
+      phone_used: method,
+      amount: totalDeposit,
+      reference: payroll.id.slice(0, 8).toUpperCase(),
+      provider: "fedapay",
+      status: "completed",
+    });
+
 
     // Tenter FedaPay (si configuré) — sinon simulation locale
     try {
@@ -518,7 +529,7 @@ export default function PayrollPage() {
             </div>
 
             <div className="rounded-xl bg-paper-2 p-3 text-[12px] text-ink-soft leading-relaxed">
-              Dépôt et paiement jour J encore <strong>simulés</strong>. Les bulletins PDF suivent ton modèle.
+              Des <strong>frais supplémentaires de transaction</strong> s’appliqueront selon le réseau Mobile Money (MTN), en plus des frais KoyaPay affichés ci-dessus.
             </div>
 
             {error && <p className="text-[12px] text-danger font-medium">{error}</p>}

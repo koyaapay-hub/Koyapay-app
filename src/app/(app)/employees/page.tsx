@@ -9,6 +9,7 @@ type Employee = {
   last_name: string;
   email: string | null;
   mobile_money: string;
+  momo_name: string | null;
   whatsapp: string | null;
   base_salary: number;
   cnss: boolean;
@@ -19,6 +20,7 @@ const emptyForm = {
   last_name: "",
   email: "",
   mobile_money: "",
+  momo_name: "",
   whatsapp: "",
   base_salary: "",
   cnss: false,
@@ -73,6 +75,7 @@ export default function EmployeesPage() {
       last_name: e.last_name,
       email: e.email || "",
       mobile_money: e.mobile_money,
+      momo_name: e.momo_name || "",
       whatsapp: e.whatsapp || "",
       base_salary: String(e.base_salary || ""),
       cnss: e.cnss,
@@ -86,6 +89,14 @@ export default function EmployeesPage() {
     setError("");
     if (!form.first_name.trim() || !form.last_name.trim()) {
       setError("Nom et prénom obligatoires.");
+      return;
+    }
+    if (!form.email.trim() || !form.email.includes("@")) {
+      setError("E-mail de l’employé obligatoire (pour le bulletin).");
+      return;
+    }
+    if (!form.momo_name.trim()) {
+      setError("Indiquez le nom affiché sur le compte MTN MoMo.");
       return;
     }
     const momo = form.mobile_money.replace(/\D/g, "");
@@ -106,8 +117,9 @@ export default function EmployeesPage() {
     const payload = {
       first_name: form.first_name.trim(),
       last_name: form.last_name.trim(),
-      email: form.email.trim() || null,
+      email: form.email.trim(),
       mobile_money: momo,
+      momo_name: form.momo_name.trim(),
       whatsapp: form.whatsapp.replace(/\D/g, "") || momo,
       base_salary: parseFloat(form.base_salary) || 0,
       cnss: form.cnss,
@@ -280,13 +292,25 @@ export default function EmployeesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold mb-1">Mobile Money (+229) *</label>
+                <label className="block text-xs font-semibold mb-1">MTN Mobile Money (+229) *</label>
                 <input
                   required
                   inputMode="numeric"
-                  placeholder="01 XX XX XX XX"
+                  placeholder="Numéro MTN uniquement"
                   value={form.mobile_money}
                   onChange={(e) => setForm({ ...form, mobile_money: e.target.value })}
+                  className="w-full border border-[var(--line)] rounded-[10px] px-3 py-2.5 text-sm outline-none focus:border-green"
+                />
+                <p className="text-[10.5px] text-ink-soft mt-1">Uniquement les numéros MTN MoMo.</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold mb-1">Nom sur le compte MoMo *</label>
+                <input
+                  required
+                  placeholder="Nom affiché chez MTN"
+                  value={form.momo_name}
+                  onChange={(e) => setForm({ ...form, momo_name: e.target.value })}
                   className="w-full border border-[var(--line)] rounded-[10px] px-3 py-2.5 text-sm outline-none focus:border-green"
                 />
               </div>
@@ -303,9 +327,10 @@ export default function EmployeesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold mb-1">Email</label>
+                <label className="block text-xs font-semibold mb-1">E-mail *</label>
                 <input
                   type="email"
+                  required
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   className="w-full border border-[var(--line)] rounded-[10px] px-3 py-2.5 text-sm outline-none focus:border-green"

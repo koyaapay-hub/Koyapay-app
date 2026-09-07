@@ -1,9 +1,16 @@
-/** Grille tarifaire KoyaPay (frais tout compris) */
+/** Grille tarifaire KoyaPay (septembre 2026) */
 export function computeFees(totalNet: number, employeeCount: number): number {
-  if (totalNet <= 0) return 0;
-  if (totalNet <= 500_000) return Math.round(totalNet * 0.007);
-  if (totalNet <= 1_000_000) return Math.round(totalNet * 0.005 + 50 * employeeCount);
-  return Math.round(totalNet * 0.004 + 50 * employeeCount);
+  const n = Math.max(0, Number(employeeCount) || 0);
+  const m = Math.max(0, Number(totalNet) || 0);
+  if (m < 50_000) {
+    // sous le plancher affiché : appliquer le 1er palier
+    return Math.round(m * 0.01 + 100 * n);
+  }
+  if (m <= 500_000) return Math.round(m * 0.01 + 100 * n);
+  if (m <= 5_000_000) return Math.round(m * 0.008 + 200 * n);
+  if (m <= 10_000_000) return Math.round(m * 0.007 + 300 * n);
+  if (m <= 25_000_000) return Math.round(m * 0.006 + 400 * n);
+  return Math.round(m * 0.005 + 550 * n);
 }
 
 export type PayVars = {
@@ -32,7 +39,6 @@ export function computeNet(row: PayVars): number {
   );
 }
 
-/** Espace classique entre milliers (jamais de slash / espace fine Unicode) */
 export function fmtAmount(n: number): string {
   const v = Math.round(Number(n) || 0);
   const neg = v < 0;
